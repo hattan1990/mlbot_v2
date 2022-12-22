@@ -22,17 +22,14 @@ class Estimation:
         self.status_true = 0
 
 
-
     def run_batch(self, pred, true, val):
         columns = ['date', 'op', 'hi', 'lo', 'cl']
         tmp_val_df = pd.DataFrame(val[:,0,:].detach().cpu().numpy(), columns=columns)
-        tmp_val_df = tmp_val_df.loc[1:, :]
-        calc_pred = pred.detach().cpu().numpy().argmax(axis=1)[:-1]
-        calc_true = true.detach().cpu().numpy().argmax(axis=1)[:-1]
+        calc_pred = pred.detach().cpu().numpy().argmax(axis=1)
+        calc_true = true.detach().cpu().numpy().argmax(axis=1)
         tmp_val_df['true'] = calc_true
         tmp_val_df['pred'] = calc_pred
 
-        reshape_dims = true.shape[0] * true.shape[1]
         acc = accuracy_score(y_true=true.detach().cpu().argmax(axis=1),
                              y_pred=pred.detach().cpu().argmax(axis=1))
         precision = precision_score(y_true=true.detach().cpu().argmax(axis=1),

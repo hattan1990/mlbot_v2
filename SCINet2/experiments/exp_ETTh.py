@@ -27,28 +27,13 @@ class CustomCrossEntropy(nn.Module):
         super().__init__()
         self.pred_len = pred_len
         self.cross_entropy = nn.CrossEntropyLoss()
-        
-    def create_masks(self, true):
-        fix_stay_values = (true[:, :, 0] == 1).sum(axis=1)
-        masks = []
-        for values in fix_stay_values:
-            if values == 0:
-                mask = 1
-            else:
-                mask = (values / self.pred_len) * 20
-            masks.append(mask)
-        return torch.tensor(masks)
 
     def forward(self, pred, true):
-        masks = self.create_masks(true)
-        for i in range(pred.shape[0]):
-            loss = self.cross_entropy(pred[i], true[i])
-            if i == 0:
-                loss_total = loss/masks[i]
-            else:
-                loss_total += loss/masks[i]
+        fix_stay_value = (true[:, 0] == 1).sum() / true.shape[0]
+        mask = fix_stay_value * 25
+        loss = self.cross_entropy(pred, true)
         
-        return loss_total
+        return loss / mask
 
 class Exp_ETTh(Exp_Basic):
     def __init__(self, args):
@@ -239,8 +224,8 @@ class Exp_ETTh(Exp_Basic):
         writer = SummaryWriter('event/run_ETTh/{}'.format(self.args.model_name))
         early_stopping = EarlyStopping(patience=self.args.patience, verbose=True)
         model_optim = self._select_optimizer()
-        criterion = nn.CrossEntropyLoss()
-        #criterion = CustomCrossEntropy()
+        #criterion = nn.CrossEntropyLoss()
+        criterion = CustomCrossEntropy()
 
         if self.args.use_amp:
             scaler = torch.cuda.amp.GradScaler()
@@ -272,7 +257,6 @@ class Exp_ETTh(Exp_Basic):
                     print('Error!')
 
                 train_loss.append(loss.item())
-                valid_loss, estimation = self.valid(valid_data, valid_loader, criterion)
 
                 if self.args.use_amp:
                     print('use amp')
