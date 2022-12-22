@@ -35,7 +35,7 @@ class CustomCrossEntropy(nn.Module):
             if values == 0:
                 mask = 1
             else:
-                mask = (values / self.pred_len) * 4
+                mask = (values / self.pred_len) * 10
             masks.append(mask)
         return torch.tensor(masks)
 
@@ -239,8 +239,8 @@ class Exp_ETTh(Exp_Basic):
         writer = SummaryWriter('event/run_ETTh/{}'.format(self.args.model_name))
         early_stopping = EarlyStopping(patience=self.args.patience, verbose=True)
         model_optim = self._select_optimizer()
-        criterion = nn.CrossEntropyLoss()
-        #criterion = CustomCrossEntropy()
+        #criterion = nn.CrossEntropyLoss()
+        criterion = CustomCrossEntropy()
 
         if self.args.use_amp:
             scaler = torch.cuda.amp.GradScaler()

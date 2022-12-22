@@ -13,7 +13,7 @@ parser.add_argument('--model', type=str, required=False, default='SCINet', help=
 ### -------  dataset settings --------------
 parser.add_argument('--data', type=str, required=False, default='BTC', choices=['BTC','ETTh1', 'ETTh2', 'ETTm1'], help='name of dataset')
 parser.add_argument('--root_path', type=str, default='../dataset/', help='root path of the data file')
-parser.add_argument('--data_path', type=str, default='train_dataset_pred.csv', help='location of the data file')
+parser.add_argument('--data_path', type=str, default='train_dataset2.csv', help='location of the data file')
 parser.add_argument('--save_path', type=str, default='', help='location of the save file')
 parser.add_argument('--features', type=str, default='MS', choices=['S', 'M'], help='features S is univariate, M is multivariate')
 parser.add_argument('--target', type=str, default='cl', help='target feature')
@@ -40,10 +40,10 @@ parser.add_argument('--lastWeight', type=float, default=1.0)
                                                               
 ### -------  training settings --------------  
 parser.add_argument('--cols', type=str, nargs='+', help='file list')
-parser.add_argument('--num_workers', type=int, default=1, help='data loader num workers')
+parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
 parser.add_argument('--itr', type=int, default=100, help='experiments times')
 parser.add_argument('--train_epochs', type=int, default=20, help='train epochs')
-parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
+parser.add_argument('--batch_size', type=int, default=320, help='batch size of train input data')
 parser.add_argument('--patience', type=int, default=10, help='early stopping patience')
 parser.add_argument('--lr', type=float, default=0.00005, help='optimizer learning rate')
 parser.add_argument('--loss', type=str, default='mae',help='loss function')
